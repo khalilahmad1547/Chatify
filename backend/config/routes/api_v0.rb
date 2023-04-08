@@ -1,5 +1,5 @@
 namespace :api do
   namespace :v0 do
-    resource :user
+    resources :users, except: [:index]
   end
 end
