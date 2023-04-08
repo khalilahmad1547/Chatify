@@ -15,6 +15,9 @@ gem 'figaro'
 # Auth
 gem 'jwt'
 
+# Serializers
+gem 'active_model_serializers'
+
 # gem "jbuilder"
 
 gem 'redis', '~> 4.0'
