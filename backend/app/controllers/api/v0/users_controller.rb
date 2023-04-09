@@ -1,5 +1,6 @@
 class Api::V0::UsersController < ApplicationController
   before_action :find_user, except: [:create]
+  skip_before_action :check_headers, :decode_jwt, :authenticate_current_user, only: [:create]
 
   def create
     user = User.new user_params
