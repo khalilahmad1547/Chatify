@@ -7,6 +7,7 @@ class ApplicationController < ActionController::API
     case exception.class.name
     when ActiveRecord::RecordInvalid.name then unprocessable_entity(exception.message)
     when ActiveRecord::RecordNotFound.name then not_found_response(exception.message)
+    when JWT::ExpiredSignature.name then unauthorized_response(exception.message)
     else process_standard_error(exception)
     end
   end
@@ -23,11 +24,10 @@ class ApplicationController < ActionController::API
   def current_user
     return if @data.blank? || @data['user_id'].blank?
 
-    @current_user ||= User.find_by(external_id: @data['user_id'],
-                                   external_type: PARTNERS_AUTH_HASH[@data['requester_token']])
+    @current_user ||= User.find_by!(id: @data['user_id'])
   end
 
-  def authenticate_current_user!
+  def authenticate_current_user
     unauthorized_response unless current_user
   end
 
@@ -45,14 +45,5 @@ class ApplicationController < ActionController::API
 
   def unprocessable_entity(error_message)
     render json: { errors: [error_message] }, status: :unprocessable_entity
-  end
-
-  private
-
-  def authenticate_request
-    header = request.headers['Authorization']
-    token = header.split(' ').last if header
-    decode = JWT.decode token
-    @current_user = User.find(decode[:user_id])
   end
 end
