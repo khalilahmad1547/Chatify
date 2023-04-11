@@ -12,7 +12,13 @@
 
 ActiveRecord::Schema[7.0].define(version: 20_230_408_163_438) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension 'plpgsql'
+  create_table "conversations", force: :cascade do |t|
+    t.integer "user1_id", null: false
+    t.integer "user2_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user1_id", "user2_id"], name: "index_conversations_on_user1_id_and_user2_id", unique: true
+  end
 
   create_table 'users', force: :cascade do |t|
     t.string 'full_name', default: '', null: false
